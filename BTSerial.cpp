@@ -39,9 +39,12 @@ void BTSerial::powerOn(bool cmd, int baud) {
 		int b = cmd ? CMD_BAUDS:baud;
 		digitalWrite(_pwrPin, HIGH);
 		_serial->begin(b);
+
+
 		_powered = true;
 		BT_DEBUG_PRINT(">> Bluetooth module power on. Baud rate : ");
 		BT_DEBUG_PRINTLN(b);
+
 	}
 }
 
@@ -92,7 +95,6 @@ int BTSerial::readUntil(char* buffer, char term, int size_buff, int timeout) {
 		if (available()) {
 			lread = read();
 			buffer[cread++] = lread;
-
 		}
 	}
 	return cread;
@@ -107,22 +109,32 @@ void BTSerial::_cmd(bool cmd) {
 		digitalWrite(_cmdPin, LOW);
 		BT_DEBUG_PRINTLN(">> Bluetooth leaving command mode.");
 	}
-	delay(100);
+	delay(200);
 }
 
-char* BTSerial::command(const char cmd[]) {
+
+
+char* BTSerial::command(const char cmd[], int timeout) {
+	char* result = 0;
 	_cmd(true);
 	BT_DEBUG_PRINT(">> Bluetooth sending command : ");
 	BT_DEBUG_PRINTLN(cmd);
 	print(cmd);
 	print("\r\n");
 
+
+
 	// read return
-	int recvd = _serial->readBytes(_buffer, BT_BUF_SIZE);
+	int recvd = readUntil(_buffer, '\n',BT_BUF_SIZE, timeout);
+	BT_DEBUG_PRINT("Received ");
+	BT_DEBUG_PRINTLN(recvd);
 	if (recvd > 0) {
 		BT_DEBUG_PRINTLN(_buffer);
-		return _buffer;
-	} else {
-		return 0;
+		_buffer[recvd]='\0';
+		result = _buffer;
+
 	}
+	delay(BT_READ_TO);
+	_cmd(false);
+	return result;
 }

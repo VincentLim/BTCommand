@@ -14,7 +14,7 @@
 
 #define CMD_BAUDS 38400
 #define BT_BUF_SIZE 64
-#define BT_READ_TO 50
+#define BT_READ_TO 100
 
 #ifdef BT_DEBUG
 
@@ -58,7 +58,7 @@ public:
 	int readUntil(char* buffer, char term, int size_buff, int timeout);
 	void _cmd(bool);
 
-	char* command(const char[]);
+	char* command(const char[], int timeout = 50);
 
 	virtual ~BTSerial();
 private:
@@ -67,7 +67,7 @@ private:
 	int _pwrPin;
 	int _statePin;
 	bool _powered;
-	char _buffer[BT_BUF_SIZE]={};
+	char _buffer[BT_BUF_SIZE];
 
 
 };
