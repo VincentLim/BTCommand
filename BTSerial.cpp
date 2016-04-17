@@ -129,8 +129,9 @@ char* BTSerial::command(const char cmd[], int timeout) {
 	BT_DEBUG_PRINT("Received ");
 	BT_DEBUG_PRINTLN(recvd);
 	if (recvd > 0) {
-		BT_DEBUG_PRINTLN(_buffer);
 		_buffer[recvd]='\0';
+		BT_DEBUG_PRINTLN(_buffer);
+
 		result = _buffer;
 
 	}

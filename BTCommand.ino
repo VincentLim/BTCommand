@@ -28,11 +28,17 @@ void setup()
 	delay(3000);
 	digitalWrite(13,cmd?HIGH:LOW);
 
-	Serial.println("Trying to connect to 20c9,d0,83173c");
-	char* response = BT.command("AT");
-	Serial.print("response : ");
-	Serial.println(response);
-	response = BT.command("AT+LINK=20c9,d0,83173c",5000);
+	BT.command("AT",200);
+	delay(200);
+	BT.command("AT+VERSION?",200);
+	delay(200);
+	BT.command("AT+ROLE?",200);
+	delay(200);
+	Serial.println("Trying to connect to 6cf3,73,df4a65");
+//	char* response = BT.command("AT");
+//	Serial.print("response : ");
+//	Serial.println(response);
+	BT.command("AT+LINK=6cf3,73,df4a65",5000);
 
 }
 
