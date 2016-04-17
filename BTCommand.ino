@@ -1,4 +1,4 @@
-#include "BTSerial.h"
+#include <BTSerial.h>
 
 
 #define BT_DEBUG
@@ -17,7 +17,7 @@ unsigned long lastPush=0;
 
 void setup()
 {
-
+	A0;
 	pinMode(13, OUTPUT);
 	digitalWrite(13,HIGH);
 	Serial.begin(9600);
