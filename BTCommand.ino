@@ -1,64 +1,75 @@
 #include <BTSerial.h>
 
-
 #define BT_DEBUG
 
 #define BT_CMD 42
 #define BT_PWR 43
-
 
 #define TEL_ADDR "6cf3,73,df4a65"
 //20c9,d0,83173c
 
 BTSerial BT(&Serial1, BT_CMD, BT_PWR);
 
-bool cmd=false;
-unsigned long lastPush=0;
+bool cmd = false;
+unsigned long lastPush = 0;
 
-void setup()
-{
-	A0;
+void setup() {
 	pinMode(13, OUTPUT);
-	digitalWrite(13,HIGH);
+	digitalWrite(13, HIGH);
 	Serial.begin(9600);
 	delay(3000);
-	digitalWrite(13,LOW);
+	digitalWrite(13, LOW);
 
 	BT.powerOn(cmd, 9600);
 	delay(3000);
-	digitalWrite(13,cmd?HIGH:LOW);
+	digitalWrite(13, cmd ? HIGH : LOW);
+	Serial.println("--------------------------");
 
-	BT.command("AT",200);
-	delay(200);
-	BT.command("AT+VERSION?",200);
-	delay(200);
-	BT.command("AT+ROLE?",200);
-	delay(200);
-	Serial.println("Trying to connect to 6cf3,73,df4a65");
-//	char* response = BT.command("AT");
-//	Serial.print("response : ");
-//	Serial.println(response);
-	BT.command("AT+LINK=6cf3,73,df4a65",5000);
+	char buffResult[64];
+
+
+	BT.checkModule();
+	BTResult resCall = BT.getLastResult(buffResult, 64);
+	Serial.println(buffResult);
+	Serial.println("--------------------------");
+	delay(1000);
+
+	BT.version();
+	Serial.println("--------------------------");
+	delay(1000);
+
+	BT.state();
+	Serial.println("--------------------------");
+	delay(1000);
+
+	BT.address();
+	Serial.println("--------------------------");
+	delay(1000);
+
+	BT.name();
+	Serial.println("--------------------------");
+	delay(1000);
+
+	BT.command("AT+PROUT", 10);
+	Serial.println("--------------------------");
+	delay(1000);
 
 }
 
-void loop()
-{
-	while(BT.available()){
+void loop() {
+	while (BT.available()) {
 		Serial.write(BT.read());
 	}
 
-	while(Serial.available()){
+	while (Serial.available()) {
 		int rb = Serial.read();
-		if(rb=='#'){
+		if (rb == '#') {
 			BT._cmd(true);
-		}
-		else if(rb=='@'){
+		} else if (rb == '@') {
 			BT._cmd(false);
 		} else {
 			BT.write(rb);
 		}
 	}
-
 
 }
