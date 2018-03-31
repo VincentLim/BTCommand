@@ -1,6 +1,7 @@
 Release
+.settings/*
 .settings
-.?project
+.cproject
 .ino.cpp
 .project
 Release/*

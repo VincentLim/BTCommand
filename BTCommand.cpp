@@ -1,11 +1,7 @@
 #define BT_DEBUG
+#include "BTCommand.h"
 #include <BTSerial.h>
 
-#define BT_CMD 42
-#define BT_PWR 43
-
-#define TEL_ADDR "6cf3,73,df4a65"
-//20c9,d0,83173c
 
 BTSerial BT(&Serial1, BT_CMD, BT_PWR);
 
