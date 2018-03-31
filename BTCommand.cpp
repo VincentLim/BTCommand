@@ -16,154 +16,89 @@ int freeRam ()
 }
 
 void setup() {
-
-
 	pinMode(13, OUTPUT);
 
+	char pin[6];
+	pin[0] = 0x3A;
+	pin[1] = 0x39;
+	pin[2] = 0x33;
+	pin[3] = 0xBC;
+	pin[4] = 0x1D;
+	pin[5] = 0x00;
 
 	digitalWrite(13, HIGH);
 	Serial.begin(9600);
 	Serial.println("***** STARTING ******");
 	Serial.print("Free ram : ");
 	Serial.println(freeRam());
-
 	delay(3000);
 	digitalWrite(13, LOW);
 
-	BT.powerOn(cmd, 9600);
-	delay(3000);
-	digitalWrite(13, cmd ? HIGH : LOW);
-	Serial.println("--------------------------");
+	//resetFactory();
 
-	char buffResult[64];
+	//findBauds();
 
-	BT.checkModule();
-	BTResult resCall = BT.getLastResult(buffResult, 64);
-	Serial.println(buffResult);
-	Serial.println("--------------------------");
-	delay(1000);
-
-	BT.command("AT+INQC",200);
+	BT.powerOn(false, 9600);
+	delay(200);
 
 	BT.version();
-	Serial.println("--------------------------");
-	delay(1000);
 
+	delay(500);
 	BT.state();
-	Serial.println("--------------------------");
-	delay(1000);
+	BT.checkModule();
 
-	Serial.println(BT.address());
-	Serial.println("--------------------------");
-	delay(1000);
+	BT.setPasswd(pin,6);
+	delay(200);
+	BT.pair("1D,BC,33393A", "20");
+	delay(200);
+	BT.link("1D,BC,33393A");
+	delay(200);
 
-//	BT.setName("Anextraordinarylongnametotestifthebufferoverflowiswellhandled"); //72 char
-//	Serial.println("--------------------------");
-//	delay(1000);
 
-	BT.setName("TOTOROOOOOO");
-	Serial.println("--------------------------");
-	delay(1000);
 
-//	BT.setName("BLUETOOFFE");
-//	Serial.println("--------------------------");
-//	delay(1000);
+//	BT.reset();
+//	BT.command("AT+INQM?");
 
-	BT.name();
-	Serial.println("--------------------------");
-	delay(1000);
+}
 
-	Serial.println(BT.getRole());
-	Serial.println("--------------------------");
-	delay(1000);
+void resetFactory(){
+	BT.powerOff();
+	delay(200);
+	BT.powerOn(false, 9600);
+	BT.orgl();
+	BT.powerOff();
+	delay(500);
+	BT.powerOn(false, 9600);
+}
 
-	Serial.println(BT.setRole(MASTER));
-	Serial.println("--------------------------");
-	delay(2000);
-
-	Serial.println(BT.getRole());
-	Serial.println("--------------------------");
-	delay(1000);
-
-	Serial.println(BT.setInqAC("9e8b33"));
-	Serial.println("--------------------------");
-	delay(1000);
-
-//	Serial.println(BT.setRole(SLAVE));
-//	Serial.println("--------------------------");
-//	delay(2000);
-//
-//	Serial.println(BT.getRole());
-//	Serial.println("--------------------------");
-//	delay(1000);
-//
-//	Serial.println(BT.init());
-//	Serial.println("--------------------------");
-//	delay(1000);
-//
-//	Serial.println(BT.getPasswd());
-//	Serial.println("--------------------------");
-//	delay(1000);
-
-	Serial.println(BT.setPasswd("1234"));
-	Serial.println("--------------------------");
-	delay(1000);
-
-	Serial.println(BT.getPasswd());
-	Serial.println("--------------------------");
-	delay(1000);
-
-	Serial.println(BT.setCMode(ANY));
-	Serial.println("--------------------------");
-	delay(1000);
-
-	Serial.println((char) BT.getCMode());
-	Serial.println("--------------------------");
-	delay(1000);
-
-	Serial.println(BT.seekDevice(TEL_ADDR));
-	Serial.println("--------------------------");
-	delay(1000);
-
-	Serial.println(BT.link(TEL_ADDR));
-	Serial.println("--------------------------");
-	delay(1000);
-
-	Serial.println(BT.countPairList());
-	Serial.println("--------------------------");
-	delay(1000);
-//
-//	Serial.println(BT.deletePairList());
-//	Serial.println("--------------------------");
-//	delay(1000);
-//
-//	Serial.println(BT.countPairList());
-//	Serial.println("--------------------------");
-//	delay(1000);
-
-//	BT.command("AT+WRONG", 10);
-//	Serial.println("--------------------------");
-//	delay(1000);
-//
-//	BT.command("AT+RESET");
-
-	Serial.print("Free ram : ");
-	Serial.println(freeRam());
+void findBauds() {
+	const unsigned long rates[] = {4800,9600,19200,38400,57600,115200};
+	BT._cmd(true);
+	for(int i = 0; i < 6; i++){
+		BT.powerOn(false, rates[i]);
+		delay(1000);
+		BT.flush();
+		BT.command("AT+STATE?", 2000);
+		delay(2000);
+		BT.powerOff();
+		delay(2000);
+	}
 
 }
 
 void loop() {
-	while (BT.available()) {
+	if (BT.available()) {
 		Serial.write(BT.read());
 	}
 
-	while (Serial.available()) {
+	if (Serial.available()) {
 		int rb = Serial.read();
 		if (rb == '#') {
 			BT._cmd(true);
 		} else if (rb == '@') {
 			BT._cmd(false);
 		} else {
+			Serial.write(rb);
 			BT.write(rb);
 		}
 	}
