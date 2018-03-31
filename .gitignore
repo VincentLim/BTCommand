@@ -1,1 +1,10 @@
-/Release/
+Release
+.settings
+.?project
+.ino.cpp
+.project
+Release/*
+/arduino/
+/build-*/
+/Libraries/
+spec.d
