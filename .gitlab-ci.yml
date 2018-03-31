@@ -10,8 +10,7 @@ build:
     - mkdir ../libraries
     - cd ../libraries
     - pwd
-    - git clone -b '2-device-discover' --single-branch --depth 1 git@gitlab.com:ArduinoBluetooth/BTSerial.git
-    - git clone --single-branch --depth 1 git@gitlab.com:ArduinoBluetooth/HC05.git
+    - git clone -b '2-device-discover' --single-branch --depth 1 https://gitlab.com/ArduinoBluetooth/BTSerial.git
     - cd ../BTCommand
     - make USER_LIB_PATH=../libraries
   artifacts:
