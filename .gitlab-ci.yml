@@ -1,0 +1,29 @@
+image: joshuacox/arduino
+
+stages:
+  - build
+
+build:
+  stage: build
+
+  script: 
+    - mkdir ../libraries
+    - cd ../libraries
+    - pwd
+    - git clone -b '2-device-discover' --single-branch --depth 1 https://gitlab.com/ArduinoBluetooth/BTSerial.git
+    - cd ../BTCommand
+    - make USER_LIB_PATH=../libraries
+  artifacts:
+    paths:
+      - build-*/BTCommand.eep
+      - build-*/BTCommand.hex
+      - build-*/BTCommand.elf
+
+  # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
+  cache:
+    paths:
+      - "build-*/*"
+# Not supported outside build path (ie /build/VinceLim/Minuteur)
+#      - ../libraries/*
+      
+
