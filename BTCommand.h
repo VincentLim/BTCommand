@@ -32,6 +32,7 @@
 #define TEL_ADDR "6cf3,73,df4a65"
 //20c9,d0,83173c
 
-
+void resetFactory();
+void findBauds();
 
 #endif /* BTCOMMAND_H_ */
